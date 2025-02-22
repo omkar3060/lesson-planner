@@ -1,6 +1,10 @@
+const API_BASE_URL = import.meta.env.PROD
+  ? "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent"
+  : "/api"; // Use proxy in development
+
 export async function fetchLessonPlan(details) {
   try {
-    const response = await fetch(`/api?key=AIzaSyDeaIu7FL-U85tkbrB2N7cckI1iwPde9qc`, {
+    const response = await fetch(`${API_BASE_URL}?key=${import.meta.env.VITE_API_KEY}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -23,8 +27,9 @@ export async function fetchLessonPlan(details) {
     }
 
     const data = await response.json();
+    console.log("API Response:", data); // Debugging log
 
-    if (data && data.candidates && data.candidates.length > 0) {
+    if (data?.candidates?.[0]?.content?.parts?.[0]?.text) {
       return data.candidates[0].content.parts[0].text;
     } else {
       throw new Error("Invalid API response format");
